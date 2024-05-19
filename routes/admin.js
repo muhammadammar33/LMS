@@ -205,6 +205,21 @@ router.put("/assignstudent/:cid/:sid", function (req, res, next) {
   );
 });
 
+router.put('/updatestudent/:id', (req, res, next) => {
+    Student.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
+    .then((result) => {
+        res.statusCode = 200;
+        res.json(result);
+    }, (err) => { return (err) })
+});
+router.put('/updateteacher/:id', (req, res, next) => {
+    Teacher.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
+    .then((result) => {
+        res.statusCode = 200;
+        res.json(result);
+    }, (err) => { return (err) })
+});
+
 // update admin profile
 router.put("/updateprofile/:aid", async (req, res, next) => {
   try {
@@ -243,7 +258,6 @@ router.put("/updatestudent/:regno", async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 //Delete Routes
 
