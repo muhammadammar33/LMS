@@ -74,18 +74,16 @@ router.get("/grades/:sid/:cid", async (req, res) => {
   const { cid } = req.params;
 
   try {
-    const marksOfAllStds = await Course.findOne({"_id":cid.toString()});
+    const marksOfAllStds = await Course.findOne({ _id: cid.toString() });
     const allStudents = marksOfAllStds.students;
 
-    marks = "Not found"
+    marks = "Not found";
 
-    for(const student of allStudents){
-      if(student.sid == sid.toString())
-        marks = student.marks
+    for (const student of allStudents) {
+      if (student.sid == sid.toString()) marks = student.marks;
     }
 
     res.json(marks);
-
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -140,21 +138,38 @@ router.get('/classes/:sid/:cid', async (req, res) => {
 });
 
 //Get student enrolled in particular course
-router.get('/getStudentEnrolled', function(req, res, next){
-    const courseId = req.body.courseId;
-    Course.findById(courseId).populate('students.sid')
-        .then((course)=>{
-            if(!course){
-                res.statusCode=404;
-                res.json({message:"Course not found"});
-            }
-            else{
-                res.statusCode=200;
-                res.json(course.students);
-            }
-        }, (err)=>{
-            return (err);
-        })
+router.get("/getStudentEnrolled", function (req, res, next) {
+  const courseId = req.body.courseId;
+  Course.findById(courseId)
+    .populate("students.sid")
+    .then(
+      (course) => {
+        if (!course) {
+          res.statusCode = 404;
+          res.json({ message: "Course not found" });
+        } else {
+          res.statusCode = 200;
+          res.json(course.students);
+        }
+      },
+      (err) => {
+        return err;
+      }
+    );
+});
+
+//Get all courses studied by a student.
+router.get("/getcourses/:sid", async (req, res, next) => {
+  try {
+    const studentId = req.params.sid;
+    const courses = await Course.find({ "students.sid": studentId }).populate(
+      "teachers.tid"
+    );
+
+    res.json(courses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 //Get details of a specific student enrolled in classes taught by the teacher.
