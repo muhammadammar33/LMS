@@ -3,6 +3,7 @@ const router = express.Router();
 const Student = require("../models/student");
 const Class = require("../models/class");
 const Course = require("../models/courses");
+const mongoose = require('mongoose');
 const { withdrawCourse, enrollCourse } = require("../Controllers/student");
 
 // GET Routes
@@ -100,6 +101,43 @@ router.post("/enrollcourse/:cid", async (req, res) => {
   enrollCourse(req, res);
 });
 
+// Route to retrieve student profile information
+router.get('/profile/:sid', async (req, res) => {
+  try {
+    const sid  = req.params.sid;
+    const studentObjectId = new mongoose.Types.ObjectId(sid);
+    const student = await Student.findById(studentObjectId);
+    if (!student) {
+      console.log("Student not found");
+      return res.status(404).json({ message: 'Student not found' });
+    }    
+    res.json(student);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// route to find class details of a specific student
+router.get('/classes/:sid/:cid', async (req, res) => {
+  try {
+    const { sid, cid } = req.params;
+    const classDetails = await Class.findById(cid).populate('students.sid', 'name rollno department').populate('teachers.tid', 'name');
+    if (!classDetails) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+    console.log(classDetails)
+    const isStudentEnrolled = classDetails.students.some(student => student.sid.equals(sid));
+    console.log(isStudentEnrolled)
+    if (!isStudentEnrolled) {
+      return res.status(404).json({ message: 'Student not enrolled in this class' });
+    }
+    res.json(classDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 //Get student enrolled in particular course
 router.get('/getStudentEnrolled', function(req, res, next){
     const courseId = req.body.courseId;
@@ -120,4 +158,4 @@ router.get('/getStudentEnrolled', function(req, res, next){
 
 module.exports=router;
 
-module.exports = router;
+
