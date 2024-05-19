@@ -3,6 +3,7 @@ const router = express.Router();
 const Student = require("../models/student");
 const Class = require("../models/class");
 const Course = require("../models/courses");
+const Teacher = require("../models/teacher");
 const mongoose = require('mongoose');
 const { withdrawCourse, enrollCourse } = require("../Controllers/student");
 
@@ -155,6 +156,64 @@ router.get('/getStudentEnrolled', function(req, res, next){
             return (err);
         })
 });
+
+//Get details of a specific student enrolled in classes taught by the teacher.
+router.get('/:studentId/teacher/:teacherId', async (req, res) => {
+  try {
+    const studentId = req.params.studentId;
+    const teacherId = req.params.teacherId;
+
+    // Find the student
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Find the teacher
+    const teacher = await Teacher.findById(teacherId);
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Find the courses taught by the teacher and enrolled by the student
+    const courses = await Course.find({
+      teachers: { $elemMatch: { tid: teacherId } },
+      students: { $elemMatch: { sid: studentId } },
+    }).populate('teachers.tid', 'name designation department')
+     .populate('students.sid', 'name rollno department');
+
+    res.json({ student, teacher, courses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+//Update marks of a student in a course
+router.put('/:studentId/courses/:courseId', async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+    const studentId = req.params.studentId;
+    const { marks } = req.body;
+
+    // Find the course and update the student's marks
+    const course = await Course.findOneAndUpdate(
+      { _id: courseId, 'students.sid': studentId },
+      { $set: { 'students.$.marks': marks } },
+      { new: true }
+    );
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course or student not found' });
+    }
+
+    res.json(course);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
 
 module.exports=router;
 
