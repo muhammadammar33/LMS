@@ -1,5 +1,5 @@
-var mongoose =require("mongoose");
-var adminSchema=new mongoose.Schema({
+const mongoose =require("mongoose");
+const adminSchema=new mongoose.Schema({
     name:{
         type:String,
         required:true

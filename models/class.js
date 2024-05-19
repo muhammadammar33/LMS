@@ -1,5 +1,5 @@
-var mongoose =require("mongoose");
-var classSchema = new mongoose.Schema({
+const mongoose =require("mongoose");
+const classSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -30,16 +30,3 @@ var classSchema = new mongoose.Schema({
   },
 });
 module.exports=mongoose.model('Class',classSchema);
-Class = require('./class');
-const classes = [
-  { name: 'Biology 101', department: 'Science' },
-  { name: 'Calculus 202', department: 'Math' },
-  // ... (3 more class objects)
-];
-
-const insertClasses = async () => {
-  for (const c of classes) {
-    const newClass = new Class(c);
-    await newClass.save();
-  }
-};
