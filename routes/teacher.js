@@ -1,4 +1,6 @@
 const express = require("express");
+const { getStudentsInSpecificClassTaughtByTeacher } = require("../Controllers/teacher");
+
 const router = express.Router();
 const Course= require("../models/courses");
 const mongoose = require("mongoose");
@@ -7,6 +9,9 @@ const mongoose = require("mongoose");
 router.get("/", function (req, res, next) {
   res.send("Teacher Dashboard");
 });
+
+//get all students in specific class taught by a teacher
+router.get("/classes/:cid/students", getStudentsInSpecificClassTaughtByTeacher);
 
 router.put("/addmarks/:sid/:cid",function(req,res,next){
   const { marks } = req.body; // Assuming marks are passed in the request body
