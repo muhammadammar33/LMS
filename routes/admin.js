@@ -5,6 +5,9 @@ const Teacher = require("../models/teacher");
 const Student = require("../models/student");
 
 const Admin = require("../models/admin");
+
+const { getHeadById } = require("../Controllers/admin");
+
 //GET Routes
 router.get("/", function (req, res, next) {
   res.send("Admin Dashboard");
@@ -106,8 +109,10 @@ router.get("/admins", function(req,res, next){
   )
 });
 
-//POST Routes
+// GET Head by ID
+router.get("/:hid", getHeadById);
 
+//POST Routes
 router.post("/addteacher", function (req, res, next) {
   Teacher.create(req.body).then(
     (teacher) => {
