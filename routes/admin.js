@@ -100,6 +100,13 @@ router.put('/assignstudent/:cid/:sid',function(req,res,next){
      res.json(result);
     },(err)=>{return (err)})
  });
+ router.put('/updatestudent/:id', (req, res, next) => {
+    Student.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
+    .then((result) => {
+        res.statusCode = 200;
+        res.json(result);
+    }, (err) => { return (err) })
+});
 router.put('/updateteacher/:id', (req, res, next) => {
     Teacher.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
     .then((result) => {
