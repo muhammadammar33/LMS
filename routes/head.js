@@ -1,10 +1,7 @@
-var express=require("express");
-var router= express.Router();
-//GET Routes
-router.get('/',function(req,res,next){
-    res.send("Head Dashboard");
-});
+const headController = require("../Controllers/head");
+var express = require("express");
+var router = express.Router();
 
+router.get("/dashboard", headController.dashboard);
 
-
-module.exports=router;
+module.exports = router;

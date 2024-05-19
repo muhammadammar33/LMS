@@ -1,10 +1,5 @@
-var express=require("express");
-var router= express.Router();
-//GET Routes
-router.get('/',function(req,res,next){
-    res.send("Teacher Dashboard");
-});
+const teacherController = require("../Controllers/teacher");
+var express = require("express");
+var router = express.Router();
 
-
-
-module.exports=router;
+router.get("/dashboard", teacherController.dashboard);
