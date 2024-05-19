@@ -74,13 +74,13 @@ router.get("/grades/:sid/:cid", async (req, res) => {
   const { cid } = req.params;
 
   try {
-    const marksOfAllStds = await Course.findOne({"_id":cid.toString()});
+    const marksOfAllStds = await Course.findOne({ "_id": cid.toString() });
     const allStudents = marksOfAllStds.students;
 
     marks = "Not found"
 
-    for(const student of allStudents){
-      if(student.sid == sid.toString())
+    for (const student of allStudents) {
+      if (student.sid == sid.toString())
         marks = student.marks
     }
 
@@ -105,13 +105,13 @@ router.post("/enrollcourse/:cid", async (req, res) => {
 // Route to retrieve student profile information
 router.get('/profile/:sid', async (req, res) => {
   try {
-    const sid  = req.params.sid;
+    const sid = req.params.sid;
     const studentObjectId = new mongoose.Types.ObjectId(sid);
     const student = await Student.findById(studentObjectId);
     if (!student) {
       console.log("Student not found");
       return res.status(404).json({ message: 'Student not found' });
-    }    
+    }
     res.json(student);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -140,21 +140,21 @@ router.get('/classes/:sid/:cid', async (req, res) => {
 });
 
 //Get student enrolled in particular course
-router.get('/getStudentEnrolled', function(req, res, next){
-    const courseId = req.body.courseId;
-    Course.findById(courseId).populate('students.sid')
-        .then((course)=>{
-            if(!course){
-                res.statusCode=404;
-                res.json({message:"Course not found"});
-            }
-            else{
-                res.statusCode=200;
-                res.json(course.students);
-            }
-        }, (err)=>{
-            return (err);
-        })
+router.get('/getStudentEnrolled', function (req, res, next) {
+  const courseId = req.body.courseId;
+  Course.findById(courseId).populate('students.sid')
+    .then((course) => {
+      if (!course) {
+        res.statusCode = 404;
+        res.json({ message: "Course not found" });
+      }
+      else {
+        res.statusCode = 200;
+        res.json(course.students);
+      }
+    }, (err) => {
+      return (err);
+    })
 });
 
 //Get details of a specific student enrolled in classes taught by the teacher.
@@ -180,7 +180,7 @@ router.get('/:studentId/teacher/:teacherId', async (req, res) => {
       teachers: { $elemMatch: { tid: teacherId } },
       students: { $elemMatch: { sid: studentId } },
     }).populate('teachers.tid', 'name designation department')
-     .populate('students.sid', 'name rollno department');
+      .populate('students.sid', 'name rollno department');
 
     res.json({ student, teacher, courses });
   } catch (err) {
@@ -214,7 +214,22 @@ router.put('/:studentId/courses/:courseId', async (req, res) => {
   }
 });
 
+// Delete a student by their registration number
+router.delete('/deletestudent/:regno', function (req, res, next) {
+  Student.deleteOne({ rollno: req.params.regno })
+    .exec()
+    .then((result) => {
+      if (result.deletedCount === 0) { // Check if any document was deleted
+        return res.status(404).json("No student found");
+      }
+      res.status(200).json("Deleted Successfully");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json(err);
+    });
+});
 
-module.exports=router;
+module.exports = router;
 
 

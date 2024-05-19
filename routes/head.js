@@ -35,22 +35,22 @@ router.post('/head/assigncourse/:cid/:tid', async (req, res) => {
 
 // UPDATE routes, remove teacher from deparment
 router.put("/removeteacher/:tid", async (req, res, next) => {
-  try{
-    const {tid} = req.params;
-    const teacher = await Teacher.findByIdAndUpdate(tid, {department: "null"});
+  try {
+    const { tid } = req.params;
+    const teacher = await Teacher.findByIdAndUpdate(tid, { department: "null" });
 
-    if(!teacher){
-      return res.status(404).json({message: "Teacher not found"});
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
     }
 
-    res.status(200).json({message: "Teacher removed from department successfully"});
+    res.status(200).json({ message: "Teacher removed from department successfully" });
 
   }
-  catch{
-    res.status(500).json({message: error.message});
+  catch {
+    res.status(500).json({ message: error.message });
   }
 })
-;
+  ;
 
 // GET Route to get a course taught by a specific teacher
 router.get("/getcourse/:tid", async (req, res, next) => {
@@ -71,3 +71,4 @@ router.get("/getcourse/:tid", async (req, res, next) => {
 
 
 module.exports = router;
+

@@ -97,16 +97,16 @@ router.get("/students/:id", function (req, res, next) {
     );
 });
 
-router.get("/admins", function(req,res, next){
-  Admin.find() .exec()
+router.get("/admins", function (req, res, next) {
+  Admin.find().exec()
     .then(
-      (admin)=>{
+      (admin) => {
         res.status(200).json(admin)
       },
-      (err)=>{
+      (err) => {
         return err;
       }
-  )
+    )
 });
 
 // GET Head by ID
@@ -148,18 +148,18 @@ router.post("/addclass", function (req, res, next) {
 });
 
 // add admin 
-router.post("/add", async(req, res, next)=>{
-try{
-  const {name} = req.body;
-  const newAdmin = new Admin({name});
-  await newAdmin.save();
-  res.status(201).json(newAdmin)
-}
-catch(err){
-  res.status(500).json({message: err.message})
-}
+router.post("/add", async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const newAdmin = new Admin({ name });
+    await newAdmin.save();
+    res.status(201).json(newAdmin)
+  }
+  catch (err) {
+    res.status(500).json({ message: err.message })
+  }
 });
-  
+
 //PUT Routes
 
 router.put("/assignteacher/:cid/:tid", function (req, res, next) {
@@ -210,7 +210,7 @@ router.put("/updateprofile/:aid", async (req, res, next) => {
   try {
     const { name } = req.body;
     const admin = await Admin.findByIdAndUpdate(
-      {_id: req.params.aid},
+      { _id: req.params.aid },
       { name: name },
       { new: true }
     );
@@ -283,13 +283,13 @@ router.delete("/delteacher/:tid", function (req, res, next) {
 });
 
 //062,086
- //Remove All teachers form a class
- router.delete('/removeteachers/:cid', async (req, res) => {
+//Remove All teachers form a class
+router.delete('/removeteachers/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
 
     const classObj = await Class.findById(cid);
-      classObj.teachers = [];
+    classObj.teachers = [];
     await classObj.save();
     res.status(200).send('All teachers removed from class');
     console.log("All teachers removed from class");
@@ -304,19 +304,20 @@ router.delete('/removeteacher/:tid/:cid', async (req, res) => {
     const { tid, cid } = req.params;
 
     const classObj = await Class.findById(cid);
-    classObj.teachers = classObj.teachers.filter(t => t.tid.toString() !== tid);  
-    await classObj.save();  
+    classObj.teachers = classObj.teachers.filter(t => t.tid.toString() !== tid);
+    await classObj.save();
     res.status(200).send('Teacher removed from class');
     console.log("Teacher removed from class");
   } catch (error) {
-    console.error(error);    }
+    console.error(error);
+  }
 });
 
 
 
 
 // removing all students from a specific class
-router.put("/removestudents/:cid",function(req,res,next){
+router.put("/removestudents/:cid", function (req, res, next) {
   Class.findOneAndUpdate(
     { _id: req.params.cid },
     {
@@ -339,7 +340,7 @@ router.put("/removestudents/:cid",function(req,res,next){
 
 // remove a specific student from aclass
 
-router.put("/removestudent/:sid/:cid",function(req,res,next){
+router.put("/removestudent/:sid/:cid", function (req, res, next) {
   Class.findOneAndUpdate(
     { _id: req.params.cid },
     {
@@ -361,6 +362,42 @@ router.put("/removestudent/:sid/:cid",function(req,res,next){
   );
 
 })
+
+
+// update a class 
+router.put('/updateclass/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const update = req.body; // Data to update
+
+    // Validate the update object against the schema
+    const { name, department, teacher, student } = update;
+    if (!name || !department || !teacher || !student || !Array.isArray(student) || student.length === 0) {
+      return res.status(400).json({ message: 'No valid update data provided' });
+    }
+
+    // Find the class by ID
+    const foundClass = await Class.findById(id);
+
+    if (!foundClass) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+
+    // Update the class object with the provided data
+    if (name) foundClass.name = name;
+    if (department) foundClass.department = department;
+    if (teacher) foundClass.teacher = teacher;
+    foundClass.student = foundClass.student.concat(student);
+
+    // Save the updated class object
+    const updatedClass = await foundClass.save();
+
+    res.status(200).json({ message: 'Class updated successfully', updatedClass });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 module.exports = router;
