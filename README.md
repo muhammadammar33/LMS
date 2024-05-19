@@ -14,7 +14,20 @@ cd LMS
 npm install
 ```
 
-3. Start the server:
+3. Create .env file using .env.example:
+
+Windows:
+```bash
+ copy .env.example .env
+ ```
+
+ Mac OS:
+ ```bash
+ cp .env.example .env
+```
+
+
+4. Start the server:
 ```bash
 npm start
 ```
