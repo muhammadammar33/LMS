@@ -5,6 +5,9 @@ const Teacher = require("../models/teacher");
 const Student = require("../models/student");
 
 const Admin = require("../models/admin");
+
+const { getHeadById } = require("../Controllers/admin");
+
 //GET Routes
 router.get("/", function (req, res, next) {
   res.send("Admin Dashboard");
@@ -106,8 +109,10 @@ router.get("/admins", function(req,res, next){
   )
 });
 
-//POST Routes
+// GET Head by ID
+router.get("/:hid", getHeadById);
 
+//POST Routes
 router.post("/addteacher", function (req, res, next) {
   Teacher.create(req.body).then(
     (teacher) => {
@@ -200,6 +205,21 @@ router.put("/assignstudent/:cid/:sid", function (req, res, next) {
   );
 });
 
+router.put('/updatestudent/:id', (req, res, next) => {
+    Student.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
+    .then((result) => {
+        res.statusCode = 200;
+        res.json(result);
+    }, (err) => { return (err) })
+});
+router.put('/updateteacher/:id', (req, res, next) => {
+    Teacher.findOneAndUpdate({_id: req.params.id}, req.body, {new: true})
+    .then((result) => {
+        res.statusCode = 200;
+        res.json(result);
+    }, (err) => { return (err) })
+});
+
 // update admin profile
 router.put("/updateprofile/:aid", async (req, res, next) => {
   try {
@@ -238,7 +258,6 @@ router.put("/updatestudent/:regno", async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 //Delete Routes
 
