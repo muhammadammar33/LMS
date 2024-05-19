@@ -67,6 +67,30 @@ router.get("/grades/:sid", async (req, res) => {
   }
 });
 
+// Route to get a certain course's grades for a student
+router.get("/grades/:sid/:cid", async (req, res) => {
+  const { sid } = req.params;
+  const { cid } = req.params;
+
+  try {
+    const marksOfAllStds = await Course.findOne({"_id":cid.toString()});
+    const allStudents = marksOfAllStds.students;
+
+    marks = "Not found"
+
+    for(const student of allStudents){
+      if(student.sid == sid.toString())
+        marks = student.marks
+    }
+
+    res.json(marks);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // Route to withdraw from a course
 router.delete("/withdrawcourse/:cid", async (req, res) => {
   withdrawCourse(req, res);
@@ -114,4 +138,24 @@ router.get('/classes/:sid/:cid', async (req, res) => {
   }
 });
 
-module.exports = router;
+//Get student enrolled in particular course
+router.get('/getStudentEnrolled', function(req, res, next){
+    const courseId = req.body.courseId;
+    Course.findById(courseId).populate('students.sid')
+        .then((course)=>{
+            if(!course){
+                res.statusCode=404;
+                res.json({message:"Course not found"});
+            }
+            else{
+                res.statusCode=200;
+                res.json(course.students);
+            }
+        }, (err)=>{
+            return (err);
+        })
+});
+
+module.exports=router;
+
+
