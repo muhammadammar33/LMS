@@ -1,5 +1,5 @@
-var mongoose = require("mongoose");
-var coursesSchema = new mongoose.Schema({
+const mongoose = require("mongoose");
+const coursesSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -27,7 +27,7 @@ var coursesSchema = new mongoose.Schema({
         },
         marks: {
           type: Number,
-          ref: "Student",
+          // default: 0,
         },
       },
     ],
