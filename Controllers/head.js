@@ -1,4 +1,4 @@
-const Courses = require("../models/Courses");
+const Courses = require("../models/courses");
 
 //getTeacchersTeaching
 

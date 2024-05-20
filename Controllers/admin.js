@@ -1,5 +1,5 @@
 const Head = require("../models/head");
-const Courses = require("../models/Courses");
+const Courses = require("../models/courses");
 
 const getHeadById = async (req, res, next) => {
   try {
