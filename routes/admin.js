@@ -6,7 +6,7 @@ const Student = require("../models/student");
 
 const Admin = require("../models/admin");
 
-const { getHeadById } = require("../Controllers/admin");
+const { getHeadById , AddStudentsInClass } = require("../Controllers/admin");
 
 //GET Routes
 router.get("/", function (req, res, next) {
@@ -112,6 +112,12 @@ router.get("/admins", function(req,res, next){
 // GET Head by ID
 router.get("/:hid", getHeadById);
 
+
+//ASZ-44
+router.post("/addstudents" , AddStudentsInClass);
+
+
+
 //POST Routes
 router.post("/addteacher", function (req, res, next) {
   Teacher.create(req.body).then(
@@ -124,6 +130,7 @@ router.post("/addteacher", function (req, res, next) {
     }
   );
 });
+
 router.post("/addstudent", function (req, res, next) {
   Student.create(req.body).then(
     (student) => {
