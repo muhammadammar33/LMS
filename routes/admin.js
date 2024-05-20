@@ -3,6 +3,7 @@ const router = express.Router();
 const Class = require("../models/class");
 const Teacher = require("../models/teacher");
 const Student = require("../models/student");
+const Courses = require("../models/courses")
 
 const Admin = require("../models/admin");
 

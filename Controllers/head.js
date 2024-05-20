@@ -1,4 +1,5 @@
 const Courses = require("../models/courses");
+const mongoose = require("mongoose");
 
 //getTeacchersTeaching
 
@@ -7,12 +8,13 @@ const getCoursesByTeacher = async (req, res, next)=>{
 
     try {
         const teacherId = req.params.tid;
-        
+
+    
         if (!mongoose.Types.ObjectId.isValid(teacherId)) {
             return res.status(400).json({ error: 'Invalid teacher ID' });
         }
 
-        const teacherCourses = await Courses.find({ teachers: teacherId });
+        const teacherCourses = await Courses.find({ tid:teacherId });
 
         if (!teacherCourses.length) {
             return res.status(404).json({ error: 'No Courses found for this teacher' });
