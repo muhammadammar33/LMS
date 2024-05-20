@@ -3,11 +3,19 @@ const router = express.Router();
 const Teacher = require("../models/teacher");
 const Course = require("../models/courses");
 const Class = require("../models/class");
+const {getTeacchersTeaching , getCoursesByTeacher} = require("../Controllers/head")
 
 //GET Routes
 router.get("/", function (req, res, next) {
   res.send("Head Dashboard");
 });
+
+
+//ASZ-44
+router.get("/courses/:tid" , getCoursesByTeacher);
+
+router.get("/teachers/:cid" , getTeacchersTeaching );
+
 
 // Get list of courses under the department (FA21-BCS-024)
 router.get("/courses", async (req, res) => {

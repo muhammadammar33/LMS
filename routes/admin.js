@@ -3,16 +3,31 @@ const router = express.Router();
 const Class = require("../models/class");
 const Teacher = require("../models/teacher");
 const Student = require("../models/student");
+const Courses = require("../models/courses")
 
 const Admin = require("../models/admin");
 
-const { getHeadById } = require("../Controllers/admin");
+const { getHeadById , AddStudentsInClass } = require("../Controllers/admin");
 
 //GET Routes
 router.get("/", function (req, res, next) {
   res.send("Admin Dashboard");
 });
-
+router.get("/courses", function (req, res, next) {
+  Courses.find()
+  .populate("teachers.tid")
+  .populate("students.sid")
+  .exec()
+  .then(
+    (clas) => {
+      res.statusCode = 200;
+      res.json(clas);
+    },
+    (err) => {
+      return err;
+    }
+  );
+})
 router.get("/classes", function (req, res, next) {
   Class.find()
     .populate("teachers.tid")
@@ -112,6 +127,12 @@ router.get("/admins", function(req,res, next){
 // GET Head by ID
 router.get("/:hid", getHeadById);
 
+
+//ASZ-44
+router.post("/addstudents" , AddStudentsInClass);
+
+
+
 //POST Routes
 router.post("/addteacher", function (req, res, next) {
   Teacher.create(req.body).then(
@@ -124,6 +145,7 @@ router.post("/addteacher", function (req, res, next) {
     }
   );
 });
+
 router.post("/addstudent", function (req, res, next) {
   Student.create(req.body).then(
     (student) => {
