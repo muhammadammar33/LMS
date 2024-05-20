@@ -108,6 +108,7 @@ router.put("/removeteacher/:tid", async (req, res, next) => {
       return res.status(404).json({ message: "Teacher not found" });
     }
 
+
     res
       .status(200)
       .json({ message: "Teacher removed from department successfully" });
@@ -153,3 +154,4 @@ router.delete("/removestudents/:cid", async (req, res) => {
 });
 
 module.exports = router;
+
