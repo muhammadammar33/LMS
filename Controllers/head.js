@@ -14,7 +14,7 @@ const getCoursesByTeacher = async (req, res, next)=>{
             return res.status(400).json({ error: 'Invalid teacher ID' });
         }
 
-        const teacherCourses = await Courses.find({ tid:teacherId });
+        const teacherCourses = await Courses.find({ 'teachers.tid': teacherId });
 
         if (!teacherCourses.length) {
             return res.status(404).json({ error: 'No Courses found for this teacher' });
@@ -36,8 +36,8 @@ const getTeacchersTeaching = async (req, res, next)=>{
         if (!mongoose.Types.ObjectId.isValid(classId)) {
             return res.status(400).json({ error: 'Invalid class ID' });
         }
-
-        const course = await Courses.findById(classId).populate('teachers');
+        
+        const course = await Courses.findById(classId).populate('teachers.tid');
 
         if (!course) {
             return res.status(404).json({ error: 'Class not found' });

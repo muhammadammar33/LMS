@@ -13,7 +13,21 @@ const { getHeadById , AddStudentsInClass } = require("../Controllers/admin");
 router.get("/", function (req, res, next) {
   res.send("Admin Dashboard");
 });
-
+router.get("/courses", function (req, res, next) {
+  Courses.find()
+  .populate("teachers.tid")
+  .populate("students.sid")
+  .exec()
+  .then(
+    (clas) => {
+      res.statusCode = 200;
+      res.json(clas);
+    },
+    (err) => {
+      return err;
+    }
+  );
+})
 router.get("/classes", function (req, res, next) {
   Class.find()
     .populate("teachers.tid")
