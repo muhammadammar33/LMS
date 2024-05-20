@@ -87,4 +87,23 @@ router.post("/head/addcourse", async (req, res) => {
   addCourse(req, res);
 });
 
+
+//GET route to retrieve list of teachers assigned to a specific course -- FA21-BCS-069
+router.get("/:id/teachers", async (req, res) => {
+  const courseId = req.params.id;
+
+  try {
+    const course = await Course.findById(courseId).populate("teachers.tid");
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    res.json({ teachers: course.teachers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

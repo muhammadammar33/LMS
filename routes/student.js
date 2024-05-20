@@ -77,7 +77,7 @@ router.get("/grades/:sid/:cid", async (req, res) => {
     const marksOfAllStds = await Course.findOne({ "_id": cid.toString() });
     const allStudents = marksOfAllStds.students;
 
-    marks = "Not found"
+    marks = "Not found";
 
     for (const student of allStudents) {
       if (student.sid == sid.toString())
@@ -85,7 +85,6 @@ router.get("/grades/:sid/:cid", async (req, res) => {
     }
 
     res.json(marks);
-
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -140,21 +139,39 @@ router.get('/classes/:sid/:cid', async (req, res) => {
 });
 
 //Get student enrolled in particular course
-router.get('/getStudentEnrolled', function (req, res, next) {
+
+router.get("/getStudentEnrolled", function (req, res, next) {
   const courseId = req.body.courseId;
-  Course.findById(courseId).populate('students.sid')
-    .then((course) => {
-      if (!course) {
-        res.statusCode = 404;
-        res.json({ message: "Course not found" });
+  Course.findById(courseId)
+    .populate("students.sid")
+    .then(
+      (course) => {
+        if (!course) {
+          res.statusCode = 404;
+          res.json({ message: "Course not found" });
+        } else {
+          res.statusCode = 200;
+          res.json(course.students);
+        }
+      },
+      (err) => {
+        return err;
       }
-      else {
-        res.statusCode = 200;
-        res.json(course.students);
-      }
-    }, (err) => {
-      return (err);
-    })
+    );
+});
+
+//Get all courses studied by a student.
+router.get("/getcourses/:sid", async (req, res, next) => {
+  try {
+    const studentId = req.params.sid;
+    const courses = await Course.find({ "students.sid": studentId }).populate(
+      "teachers.tid"
+    );
+
+    res.json(courses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 //Get details of a specific student enrolled in classes taught by the teacher.
@@ -228,6 +245,22 @@ router.delete('/deletestudent/:regno', function (req, res, next) {
       console.error(err);
       res.status(500).json(err);
     });
+//GET route to retrieve details of a specific student -- FA21-BCS-069   
+router.get("/:id", async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findById(studentId);
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json({ student });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;

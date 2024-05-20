@@ -1,8 +1,10 @@
 const express = require("express");
-const { getStudentsInSpecificClassTaughtByTeacher } = require("../Controllers/teacher");
+const {  getStudentsInSpecificClassTaughtByTeacher,} = require("../Controllers/teacher");
 
 const router = express.Router();
-const Course= require("../models/courses");
+const Course = require("../models/courses");
+const Teacher = require("../models/teacher");
+
 const mongoose = require("mongoose");
 
 //GET Routes
@@ -13,15 +15,18 @@ router.get("/", function (req, res, next) {
 //get all students in specific class taught by a teacher
 router.get("/classes/:cid/students", getStudentsInSpecificClassTaughtByTeacher);
 
-router.put("/addmarks/:sid/:cid",function(req,res,next){
+router.put("/addmarks/:sid/:cid", function (req, res, next) {
   const { marks } = req.body; // Assuming marks are passed in the request body
 
   Courses.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(req.params.cid), 'students.sid': mongoose.Types.ObjectId(req.params.sid) },
+    {
+      _id: mongoose.Types.ObjectId(req.params.cid),
+      "students.sid": mongoose.Types.ObjectId(req.params.sid),
+    },
     {
       $set: {
-        'students.$.marks': marks
-      }
+        "students.$.marks": marks,
+      },
     },
     { new: true, upsert: false }
   ).then(
@@ -29,15 +34,14 @@ router.put("/addmarks/:sid/:cid",function(req,res,next){
       if (result) {
         res.status(200).json(result);
       } else {
-        res.status(404).json({ message: 'Course or student not found' });
+        res.status(404).json({ message: "Course or student not found" });
       }
     },
     (err) => {
       res.status(500).json({ error: err.message });
     }
   );
-
-})
+});
 
 // Route to reset a student's marks in a certain course to zero
 router.delete("/deleteMarks/:sid/:cid", async (req, res) => {
@@ -67,4 +71,44 @@ router.delete("/deleteMarks/:sid/:cid", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Route to delete marks of all students in a course
+router.delete("/removemarks/:cid", async (req, res) => {
+  try {
+    const courseId = req.params.cid;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    course.students.forEach((student) => {
+      student.marks = undefined;
+    });
+    await course.save();
+    res.json({ message: "Marks of all students removed from the course" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+//PUT route to update details of a specific teacher -- FA21-BCS-069
+router.put("/:id", async (req, res) => {
+  const teacherId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const teacher = await Teacher.findByIdAndUpdate(teacherId, updates, { new: true });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json({ teacher });
+  } catch (error) {
+    console.error("Error updating teacher:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
 module.exports = router;
