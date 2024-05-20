@@ -229,6 +229,23 @@ router.put('/:studentId/courses/:courseId', async (req, res) => {
   }
 });
 
+//GET route to retrieve details of a specific student -- FA21-BCS-069   
+router.get("/:id", async (req, res) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Student.findById(studentId);
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json({ student });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports=router;
 

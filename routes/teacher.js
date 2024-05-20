@@ -1,10 +1,9 @@
 const express = require("express");
-const {
-  getStudentsInSpecificClassTaughtByTeacher,
-} = require("../Controllers/teacher");
+const {  getStudentsInSpecificClassTaughtByTeacher,} = require("../Controllers/teacher");
 
 const router = express.Router();
 const Course = require("../models/courses");
+const Teacher = require("../models/teacher");
 
 const mongoose = require("mongoose");
 
@@ -90,5 +89,26 @@ router.delete("/removemarks/:cid", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+//PUT route to update details of a specific teacher -- FA21-BCS-069
+router.put("/:id", async (req, res) => {
+  const teacherId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const teacher = await Teacher.findByIdAndUpdate(teacherId, updates, { new: true });
+
+    if (!teacher) {
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json({ teacher });
+  } catch (error) {
+    console.error("Error updating teacher:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 module.exports = router;
