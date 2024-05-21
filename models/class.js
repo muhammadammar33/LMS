@@ -1,5 +1,5 @@
-var mongoose =require("mongoose");
-var classSchema = new mongoose.Schema({
+const mongoose =require("mongoose");
+const classSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,

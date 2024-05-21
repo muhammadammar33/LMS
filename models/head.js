@@ -1,5 +1,5 @@
-var mongoose =require("mongoose");
-var headSchema = new mongoose.Schema({
+const mongoose = require("mongoose");
+const headSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -9,4 +9,4 @@ var headSchema = new mongoose.Schema({
     required: true,
   },
 });
-module.exports=mongoose.model('Head',headSchema);
+module.exports = mongoose.model("Head", headSchema);
