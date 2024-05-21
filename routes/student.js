@@ -5,7 +5,8 @@ const Class = require("../models/class");
 const Course = require("../models/courses");
 const Teacher = require("../models/teacher");
 const mongoose = require('mongoose');
-const { withdrawCourse, enrollCourse } = require("../Controllers/student");
+
+const { withdrawCourse, enrollCourse ,dashboard} = require("../Controllers/student");
 
 // GET Routes
 router.get("/", function (req, res, next) {
@@ -263,6 +264,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+router.get("/dashboard", dashboard);
 
+module.exports = router;
 
