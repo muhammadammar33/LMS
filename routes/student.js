@@ -6,7 +6,7 @@ const Course = require("../models/courses");
 const Teacher = require("../models/teacher");
 const mongoose = require('mongoose');
 
-const { withdrawCourse, enrollCourse ,dashboard} = require("../Controllers/student");
+const { withdrawCourse, enrollCourse, dashboard } = require("../Controllers/student");
 
 // GET Routes
 router.get("/", function (req, res, next) {
@@ -245,7 +245,8 @@ router.delete('/deletestudent/:regno', function (req, res, next) {
     .catch((err) => {
       console.error(err);
       res.status(500).json(err);
-    });
+    })
+});
 //GET route to retrieve details of a specific student -- FA21-BCS-069   
 router.get("/:id", async (req, res) => {
   const studentId = req.params.id;
