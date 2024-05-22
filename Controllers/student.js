@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Course = require("../models/courses");
 const Student = require("../models/student");
+const Class = require("../models/class");
 
 const withdrawCourse = async (req, res) => {
   try {
@@ -54,6 +55,23 @@ const enrollCourse = async (req, res) => {
   }
 };
 
+/* Get Classes enrolled by student */
+const getClasses = async (req, res) => {
+  try {
+    const sid = req.params.sid;
+    const studentId = new mongoose.Types.ObjectId(sid);
+    const student = await Student.findById(studentId);
+    const classes = await Class.find({ 'students.sid': studentId });
+    if (!classes) {
+      return res.status(404).json({ error: "No class found for this student" })
+    }
+    res.json(classes);
+
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const dashboard = async (req, res) => {
   try {
     const studentId = req.query.studentId; // taking studentId from query
@@ -90,4 +108,5 @@ const dashboard = async (req, res) => {
   }
 };
 
-module.exports = { withdrawCourse, enrollCourse, dashboard };
+
+module.exports = { withdrawCourse, enrollCourse, getClasses,dashboard };
