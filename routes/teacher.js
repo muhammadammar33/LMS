@@ -2,6 +2,8 @@ const express = require("express");
 const {
   getStudentsInSpecificClassTaughtByTeacher,
   dashboard,
+  viewProfile,
+  retrieveStudents,
 } = require("../Controllers/teacher");
 
 const router = express.Router();
@@ -179,6 +181,14 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+/* View Teacher profile */
+
+router.get("/profile/:tid",viewProfile);
+
+/* View list of students taught by teacher */
+
+router.get("/students/:tid",retrieveStudents)
 
 router.get("/dashboard", dashboard);
 
