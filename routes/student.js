@@ -93,6 +93,24 @@ router.get('/getStudentEnrolled', function(req, res, next){
             return (err);
         })
 });
+router.put("/updateprofile/:sid", async (req, res) => {
+  try {
+    const sid = req.params.sid;
+    const updatedProfile = req.body;
+
+    
+    const updatedStudent = await Student.findByIdAndUpdate(sid, updatedProfile, { new: true });
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json(updatedStudent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports=router;
 
