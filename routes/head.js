@@ -215,6 +215,27 @@ router.delete("/removestudents/:cid", async (req, res) => {
   }
 });
 
+// Route to update the head of department's profile information
+router.put("/updateprofile/:hid", async (req, res) => {
+  try {
+    const hid = req.params.hid;
+    const updates = req.body;
+
+    // Find the head of department by ID and update their profile
+    const updatedHead = await Head.findByIdAndUpdate(hid, updates, { new: true });
+
+    if (!updatedHead) {
+      return res.status(404).json({ message: "Head of department not found" });
+    }
+
+    res.json(updatedHead);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 router.get("/dashboard", dashboard);
 
 module.exports = router;
