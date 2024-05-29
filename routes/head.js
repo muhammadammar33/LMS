@@ -118,7 +118,7 @@ router.get('/courses/:id/teachers', async (req, res) => {
   try {
     const courseId = req.params.id;
 
-    const course = await Course.findOne({_id: courseId}).populate("teachers");
+    const course = await Course.findOne({ _id: courseId }).populate("teachers");
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -238,5 +238,19 @@ router.put("/updateprofile/:hid", async (req, res) => {
 
 
 router.get("/dashboard", dashboard);
+
+// Put Route basic code to update a course's data
+router.put('/updatecourse/:id', function (req, res, next) {
+  Course.findByIdAndUpdate(req.params.id, req.body)
+    .then(
+      (result) => {
+        res.statusCode = 200;
+        res.json(result);
+      },
+      (err) => {
+        return err;
+      }
+    );
+});
 
 module.exports = router;
